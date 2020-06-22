@@ -1,0 +1,31 @@
+---
+title: "Untitled"
+output: html_document
+---
+
+```{r}
+#read in Fixel h5 file and measures file
+#To create h5 file, use fixeldb_create in terminal
+ZAPR01 <- FixelArray("/storage/vsydnor/ZAPR01_Fixels/ZAPR01-amygdala.h5", c("FD"))
+phenotypes <- read.csv("/storage/vsydnor/ZAPR01_Fixels/ZAPR01_phenotypes_imaging_amygdalafixels.csv")
+```
+
+```{r}
+#Run linear model for all fixels
+#switch to develop git branch and source all R files in FixelDB/R to get FixelArray.lm
+amygdala.lm <- FixelArray.lm(FD ~ Amygdala_TMSsp120_sigchange_mean + Sex_coded + Diagnosis + Age, data = ZAPR01, phenotypes = phenotypes, scalar = "FD", n_cores = 6) 
+```
+
+```{r}
+#Pivot output
+amygdala.lm %>%
+  mutate(term = stringr::str_replace_all(term, "\\(|\\)", "")) %>%
+  tidyr::pivot_wider(names_from = term, values_from = c(estimate, std.error, statistic, p.value)) -> amygdala.lm.pivot
+```
+
+```{r}
+#Write results
+#need to switch back to val git branch and run Write Results function in FixelArray.R. Doesn't work on master or develop branch
+writeResults(fa=ZAPR01, data= amygdala.lm.pivot, name = 'results/results_matrix')
+#To write h5 file back to fixel directory, use fixelstats_write in terminal 
+```
