@@ -5,7 +5,7 @@ stimsites=/storage/vsydnor/ZAPR01_Fixels/PFC_Amygdala_Tractography_Analyses/site
 
 cd $ZAP/subject_data
 
-for i in sub* ; do
+for i in sub-ZAPR01C* ; do
 
 #extract x,y,z coordinates for each subject+ROI pair
 
